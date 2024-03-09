@@ -18,10 +18,10 @@ jobs:
                   registry-url: https://registry.npmjs.org/
             - run: git config --global user.email "p.torbinskiy@gmail.com"
             - run: git config --global user.name "Petro Torbynskyy"
-            - run: npm ci
             - working-directory: ./package
               name: Build "jet-blaze" packages
               run: |
+                  npm ci
                   npm run lint
                   git pull
                   npm version patch
