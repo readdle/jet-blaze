@@ -7,29 +7,17 @@ on:
 jobs:
     publish-gpr:
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            packages: write
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
                   node-version: 20
                   registry-url: https://registry.npmjs.org/
-            - run: git config --global user.email "p.torbinskiy@gmail.com"
-            - run: git config --global user.name "Petro Torbynskyy"
             - working-directory: ./package
               name: Build "jet-blaze" packages
               run: |
                   npm ci
-                  npm run lint
-                  git pull
-                  npm version patch
                   npm run build
-                  git add -A
-                  git commit -m "Bump version"
-                  git push
-                  git push --tags
             - working-directory: ./package/dist
               name: Publish "jet-blaze" to NPM Package Registry
               env:
