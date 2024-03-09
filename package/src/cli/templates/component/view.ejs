@@ -1,0 +1,11 @@
+import React from "react";
+
+export interface ViewProps {
+    readonly val: string;
+}
+
+export const <%= componentName %>View: React.FC<ViewProps> = props => {
+    return (
+        <div>{props.val}</div>
+    );
+};

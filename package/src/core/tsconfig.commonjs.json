@@ -1,0 +1,14 @@
+{
+  "extends": ["../../tsconfig.json"],
+  "compilerOptions": {
+    "target": "es5",
+    "jsx": "react",
+    "downlevelIteration": true,
+    "module": "commonjs",
+    "outDir": "../../dist/lib",
+    "verbatimModuleSyntax": false,
+    "removeComments": false,
+    "declaration": true
+  },
+  "include": ["./"]
+}

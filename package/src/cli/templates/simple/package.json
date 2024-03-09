@@ -1,0 +1,34 @@
+{
+  "name": "<%= projectName %>",
+  "version": "1.0.0",
+  "description": "",
+  "source": "./src/index.html",
+  "scripts": {
+    "clean": "rimraf dist",
+    "check": "tsc --noEmit",
+    "watch": "npm run clean && parcel watch",
+    "serve": "npm run clean && parcel serve",
+    "build": "npm run clean && parcel build",
+    "test": "glob -c \"node --import tsx --no-warnings --test\" \"./**/*.test.ts\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rxjs": "^7.8.1",
+    "jet-blaze": "^0.0.1"
+  },
+  "devDependencies": {
+    "@parcel/packager-ts": "^2.10.3",
+    "@parcel/transformer-typescript-types": "^2.10.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.2",
+    "parcel": "^2.10.3",
+    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.2.41",
+    "glob": "^10.3.10",
+    "tsx": "^4.7.0",
+    "@types/node": "20.10.5"
+  }
+}

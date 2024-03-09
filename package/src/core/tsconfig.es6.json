@@ -1,0 +1,12 @@
+{
+  "extends": ["../../tsconfig.json"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "ES6",
+    "jsx": "react",
+    "outDir": "../../dist/es6",
+    "removeComments": false,
+    "declaration": true
+  },
+  "include": ["./"]
+}

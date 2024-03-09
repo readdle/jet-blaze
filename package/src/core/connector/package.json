@@ -1,0 +1,6 @@
+{
+  "main": "../lib/connector/index.js",
+  "module": "../es6/connector/index.js",
+  "typings": "../lib/connector/index.d.ts",
+  "sideEffects": false
+}

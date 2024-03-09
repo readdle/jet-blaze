@@ -1,0 +1,6 @@
+import type { Controller } from "jet-blaze/connector";
+import { key } from "jet-blaze/di";
+import type { Props } from "./<%= componentName %>";
+import type { ViewProps } from "./<%= componentName %>View";
+
+export const <%= componentNameCamelCase %>ControllerKey = key<Controller<Props, ViewProps>>("<%= componentName %>Controller");

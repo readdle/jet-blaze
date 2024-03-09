@@ -1,0 +1,14 @@
+{
+  "name": "create-jet-blaze",
+  "version": "0.0.1",
+  "description": "Bootstrap Jet Blaze project",
+  "bin": {
+    "create-jet-blaze": "./create-app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/readdle/jet-blaze.git"
+  },
+  "author": "Petro Torbynskyy <p.torbinskiy@gmail.com>",
+  "license": "MIT"
+}

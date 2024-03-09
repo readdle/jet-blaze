@@ -1,0 +1,6 @@
+{
+  "main": "../lib/di-react/index.js",
+  "module": "../es6/di-react/index.js",
+  "typings": "../lib/di-react/index.d.ts",
+  "sideEffects": false
+}

@@ -1,0 +1,26 @@
+import {
+    type Controller,
+    connect
+} from "jet-blaze/connector";
+import { of } from "rxjs";
+import { type ViewProps, <%= componentName %>View } from "./<%= componentName %>View";
+import { <%= componentNameCamelCase %>ControllerKey } from "./<%= kebabCaseComponentName %>-controller-key";
+
+export interface Props {}
+
+export function create<%= componentName %>Controller(
+): Controller<Props, ViewProps> {
+    return () => {
+        const val$ = of("<%= componentName %>");
+        return {
+            viewState: {
+                val: [val$, ""]
+            }
+        };
+    };
+}
+
+// TODO: Add the line to the DI module to register the component
+// container.register(<%= componentNameCamelCase %>ControllerKey, c => create<%= componentName %>Controller());
+
+export const <%= componentName %> = connect(<%= componentName %>View, <%= componentNameCamelCase %>ControllerKey);

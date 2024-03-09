@@ -1,0 +1,50 @@
+{
+  "name": "jet-blaze",
+  "version": "0.0.1",
+  "description": "Jet Blaze is a simple and lightweight framework for React applications.",
+  "main": "./dist/lib/index.js",
+  "module": "./dist/es6/index.js",
+  "typings": "./dist/lib/index.d.ts",
+  "sideEffects": false,
+  "bin": {
+    "jb": "./cli/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/readdle/jet-blaze.git"
+  },
+  "author": "Petro Torbynskyy <p.torbinskiy@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "@types/react": "^18.2.41",
+    "@types/react-dom": "^18.2.17",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.5",
+    "change-case": "^5.4.3",
+    "commander": "^11.1.0",
+    "ejs": "^3.1.9",
+    "enquirer": "^2.4.1",
+    "esbuild": "^0.20.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "clean": "rimraf dist && rimraf dist-create-app",
+    "prebuild": "npm run clean",
+    "lint": "prettier --check .",
+    "lint:fix": "prettier --write .",
+    "build-core": "tsc -p src/core/tsconfig.commonjs.json && tsc -p src/core/tsconfig.es6.json",
+    "prebuild-create": "tsc -p src/cli/tsconfig.json --noEmit",
+    "build-create": "esbuild create-app=src/cli/main.ts --bundle --platform=node --outdir=dist-create-app --format=cjs",
+    "prebuild-cli": "tsc -p src/cli/tsconfig.json --noEmit",
+    "build-cli": "esbuild cli=src/cli/cli.ts --bundle --platform=node --outdir=dist/cli --format=cjs",
+    "build": "npm run build-core  && npm run build-cli && npm run build-create",
+    "postbuild": "ts-node scripts/post-build.ts"
+  }
+}

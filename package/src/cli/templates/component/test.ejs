@@ -1,0 +1,21 @@
+import { setUp, type SetupResult } from "jet-blaze/connector";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { create<%= componentName %>Controller, type Props } from "./<%= componentName %>";
+import type { ViewProps } from "./<%= componentName %>View";
+
+describe("<%= componentName %> Component", () => {
+    let setup: SetupResult<Props, ViewProps>;
+    beforeEach(() => {
+        const initialProps: Props = {};
+        setup = setUp(create<%= componentName %>Controller(), initialProps);
+        setup.mount();
+    });
+
+    afterEach(() => {
+        setup.dispose();
+    });
+
+    it("renders", () => {
+        expect(setup.out.val).toBe("<%= componentName %>");
+    });
+});

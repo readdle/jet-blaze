@@ -1,0 +1,21 @@
+import { type Observable, Subject } from "rxjs";
+
+export interface <%= serviceName %>Service {
+    val$: Observable<string>;
+    setValue: (value: string) => void;
+}
+
+export const create<%= serviceName %>Service = (): <%= serviceName %>Service & Disposable => {
+    const val$ = new Subject<string>();
+    return {
+        val$,
+        setValue: (value: string) => val$.next(value),
+        [Symbol.dispose]: () => [val$].forEach(i => i.complete())
+    };
+};
+
+// TODO: Add this to the header of DI module to register the service
+// export const <%= serviceNameCamelCase %>ServiceKey = key<<%= serviceName %>Service>("<%= serviceName %>Service");
+
+// TODO: Add this to the registrations within DI module to register the service
+// container.register(<%= serviceNameCamelCase %>ServiceKey, _c => create<%= serviceName %>Service());
