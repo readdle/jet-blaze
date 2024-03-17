@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "jet-blaze": "^0.0.2",
+    "jet-blaze": "^0.0.5",
     "rxjs": "^7.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

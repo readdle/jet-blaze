@@ -2,17 +2,18 @@
 
 import { camelCase, kebabCase, pascalCase } from "change-case";
 import { Command, Option } from "commander";
-import { existsSync } from "fs";
-import { mkdir, readFile, writeFile } from "fs/promises";
+import { existsSync, realpathSync } from "fs";
+import {mkdir, readFile, writeFile} from "fs/promises";
 import path, { dirname } from "path";
 import packageJson from "../../package.json";
 import { createEjsTransformer } from "./ejs-transformer";
 
-const scriptPath = process.argv[1];
-if (!scriptPath) {
-  console.error("Wrong script path", scriptPath);
+if (!process.argv[1]) {
+  console.error("Wrong script path", process.argv[1]);
   process.exit(1);
 }
+
+const scriptPath = realpathSync(process.argv[1]);
 
 const program = new Command();
 program
