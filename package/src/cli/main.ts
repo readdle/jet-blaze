@@ -3,6 +3,7 @@
 import { Option, program } from "commander";
 import enquirer from "enquirer";
 import path, { dirname } from "path";
+import { realpath } from "fs/promises";
 import { createEjsTransformer } from "./ejs-transformer";
 import { copyDirectoryWithTransformation } from "./utils";
 
@@ -48,11 +49,11 @@ async function promptForAppName(): Promise<string> {
 }
 
 async function main(projectName: string, template: string): Promise<void> {
-  const scriptPath = process.argv[1];
-  if (!scriptPath) {
-    console.error("Wrong script path", scriptPath);
+  if (!process.argv[1]) {
+    console.error("Wrong script path", process.argv[1]);
     process.exit(1);
   }
+  const scriptPath = await realpath(process.argv[1]);
 
   if (!projectName || !isValidNpmPackageName(projectName)) {
     projectName = await promptForAppName();
