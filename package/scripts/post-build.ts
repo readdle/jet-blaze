@@ -36,6 +36,7 @@ async function main(): Promise<void> {
     JSON.stringify(packageJson, null, 4),
   );
   await fs.copyFile("../LICENSE", "./dist/LICENSE");
+  await fs.copyFile("../README.md", "./dist/README.md");
   await fs.mkdir("./dist/di");
   await fs.copyFile("./src/core/di/package.json", "./dist/di/package.json");
   await fs.mkdir("./dist/di-react");
