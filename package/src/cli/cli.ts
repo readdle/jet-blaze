@@ -16,8 +16,8 @@ if (!scriptPath) {
 
 const program = new Command();
 program
-  .name("reactdix-cli")
-  .description("ReactDiX application CLI")
+  .name("jet-blaze-cli")
+  .description("Jet Blaze application CLI")
   .version(packageJson.version);
 
 program
