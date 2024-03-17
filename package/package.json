@@ -1,6 +1,6 @@
 {
   "name": "jet-blaze",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Jet-Blaze is a cutting-edge framework for building single-page applications (SPA) using TypeScript, React, and RxJS. It provides a robust structure, combining React Views for the presentation layer, controllers for logic handling, and services for shared logic.",
   "main": "./dist/lib/index.js",
   "module": "./dist/es6/index.js",
