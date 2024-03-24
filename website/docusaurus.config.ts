@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Jet Blaze',
-  tagline: 'Dinosaurs are cool',
+  tagline: 'Jet-Blaze is a cutting-edge framework for building applications using TypeScript, React, and RxJS.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
