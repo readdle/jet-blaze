@@ -53,7 +53,7 @@ const config: Config = {
       title: 'Jet Blaze',
       logo: {
         alt: 'Jet Blaze Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {
