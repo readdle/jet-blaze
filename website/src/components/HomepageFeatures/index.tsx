@@ -10,29 +10,49 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'React Views',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+          Utilize React for building the presentation layer with efficiency and flexibility.
+      </>
+    ),
+  },{
+    title: 'Controllers and Services',
+    description: (
+      <>
+          Controllers manage application logic and interact with services for shared logic functionalities.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'RxJS Integration',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+          Leverage RxJS for handling asynchronous operations, streamlining the process of preparing view data and managing side effects.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Dependency Injection Container',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+          Easily assemble your application and manage dependencies, ensuring clean and maintainable code.
+      </>
+    ),
+  },
+  {
+    title: 'Test Bed',
+    description: (
+      <>
+          Includes a test environment specifically designed for testing the controllers within the framework.
+      </>
+    ),
+  },
+  {
+    title: 'CLI Tooling',
+    description: (
+      <>
+          Simplify the creation of new components with a convenient CLI command.
       </>
     ),
   },
