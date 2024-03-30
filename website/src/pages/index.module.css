@@ -21,3 +21,8 @@
   align-items: center;
   justify-content: center;
 }
+
+.heroSubtitle {
+  max-width: 45ch;
+  margin-inline: auto;
+}

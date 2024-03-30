@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Website" pattern="file:README.md||file[jet-blaze]:website//*" />
+</component>

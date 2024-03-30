@@ -61,30 +61,35 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          position: 'right',
+          label: 'GitHub',
+          href: 'https://github.com/readdle/jet-blaze.git',
         }
       ],
     },
     footer: {
       style: 'dark',
       links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Get started',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/readdle/jet-blaze.git',
-            },
-          ],
-        },
+        // {
+        //   title: 'Docs',
+        //   items: [
+        //     {
+        //       label: 'Get started',
+        //       to: '/docs/intro',
+        //     },
+        //   ],
+        // },
+        // {
+        //   title: 'More',
+        //   items: [
+        //     {
+        //       label: 'GitHub',
+        //       href: 'https://github.com/readdle/jet-blaze.git',
+        //     },
+        //   ],
+        // },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Readdle, Inc. Built with Docusaurus.`,
     },
