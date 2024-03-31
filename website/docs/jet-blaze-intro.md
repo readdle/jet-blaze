@@ -3,10 +3,6 @@ sidebar_label: Introduction
 sidebar_position: 1
 ---
 
-Certainly! Here's the revised "Introduction" section of the Jet-Blaze documentation with the suggested fixes:
-
----
-
 # Introduction to Jet-Blaze Framework
 
 ## What is Jet-Blaze?
@@ -37,7 +33,3 @@ Jet-Blaze is designed to tackle a spectrum of challenges commonly encountered in
 The framework uses components, services, and controllers to manage the application's logic and presentation. A built-in DI (Dependency Injection) container manages the lifecycle of services and controllers within the React tree structure, allowing for scope-based lifecycle management. Finally, Jet-Blaze leverages RxJS for a declarative approach to code, seamlessly handling both synchronous and asynchronous tasks.
 
 These solutions enable developers to adhere to SOLID principles, fostering a well-structured codebase and reduced coupling, thereby simplifying maintenance.
-
----
-
-This revised introduction aims to provide a clear, concise, and professional overview of the Jet-Blaze framework, aligning with the standards of technical writing in software development.
