@@ -3,7 +3,7 @@ sidebar_label: Introduction
 sidebar_position: 1
 ---
 
-# Introduction to Jet-Blaze Framework
+# Overview
 
 ## What is Jet-Blaze?
 
