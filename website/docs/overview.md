@@ -1,5 +1,5 @@
 ---
-sidebar_label: Introduction
+sidebar_label: Overview
 sidebar_position: 1
 ---
 
@@ -18,8 +18,7 @@ and application scalability.
 React is a great library for building the presentation layer of web applications, but it lacks some features essential
 for building large-scale applications.
 
-#### React is not a Framework
-Importantly, React is not a **framework**; it is a library dedicated to building user interfaces. We can build a
+Importantly, React is not a **framework**. It is a library dedicated to building user interfaces. We can build a
 complete application using React, but often we need to use other libraries for state management, routing, dependency
 injection, etc.
 
