@@ -14,6 +14,7 @@
     "url": "https://github.com/readdle/jet-blaze.git"
   },
   "author": "Petro Torbynskyy <p.torbinskiy@gmail.com>",
+  "homepage": "https://readdle.github.io/jet-blaze/",
   "license": "MIT",
   "keywords": [
     "Dependency Injection",
