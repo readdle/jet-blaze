@@ -20,7 +20,7 @@ export interface TodoStateService {
 
 export type Item = {
   id: string;
-  value: string;
+  name: string;
   completed: boolean;
 };
 
@@ -76,7 +76,7 @@ export const createTodoStateService = (): TodoStateService & Disposable => {
               ...state.items,
               {
                 id: uuid(),
-                value: action.value,
+                name: action.value,
                 completed: false,
               },
             ],
