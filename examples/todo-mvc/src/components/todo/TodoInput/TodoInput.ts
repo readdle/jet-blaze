@@ -28,10 +28,7 @@ export function createTodoInputController(
     const addTodoEffect$ = onKeyDownEnter$.pipe(
       withLatestFrom(name$),
       map(([, val]) => val),
-      tap((name) => {
-        console.log("addTodoEffect$", name);
-        todoStateService.addTodo(name);
-      }),
+      tap((name) => todoStateService.addTodo(name)),
     );
 
     return {
