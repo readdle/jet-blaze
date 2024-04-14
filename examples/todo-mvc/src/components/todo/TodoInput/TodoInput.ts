@@ -21,7 +21,7 @@ export function createTodoInputController(
       onChange$,
       onKeyDownEnter$.pipe(
         map(() => ""),
-        observeOn(asapScheduler),
+        observeOn(asapScheduler), // This delay the reset of the input value to the next tick after addTodoEffect$ is executed
       ),
     );
 
