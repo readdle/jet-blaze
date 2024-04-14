@@ -16,16 +16,18 @@ export interface Props {}
 export function createTodoInputController(
   todoStateService: TodoStateService,
 ): Controller<Props, ViewProps> {
-  return ({ onChange$, onKeyDownEnter$ }) => {
+  return ({ onChange$, onKeyDownEnter$, onAddButtonClick$ }) => {
+    const addItem$ = merge(onKeyDownEnter$, onAddButtonClick$);
+
     const name$ = merge(
       onChange$,
-      onKeyDownEnter$.pipe(
+      addItem$.pipe(
         map(() => ""),
         observeOn(asapScheduler), // This delay the reset of the input value to the next tick after addTodoEffect$ is executed
       ),
     );
 
-    const addTodoEffect$ = onKeyDownEnter$.pipe(
+    const addTodoEffect$ = addItem$.pipe(
       withLatestFrom(name$),
       map(([, val]) => val),
       tap((name) => todoStateService.addTodo(name)),

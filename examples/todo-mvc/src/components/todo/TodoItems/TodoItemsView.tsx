@@ -7,6 +7,9 @@ export interface ViewProps {
 
   readonly filterType: FilterType;
   readonly onFilterChanged: (filterType: FilterType) => void;
+
+  readonly onToggleAllClick: () => void;
+  readonly onRemoveCompletedClick: () => void;
 }
 
 export const enum FilterType {
@@ -39,6 +42,15 @@ const FilterButton: React.FC<{
 export const TodoItemsView: React.FC<ViewProps> = (props) => {
   return (
     <div className={"todo-items-container"}>
+      <div>
+        <div>List actions:</div>
+        <button onClick={() => props.onToggleAllClick()}>Toggle All</button>
+        <button onClick={() => props.onRemoveCompletedClick()}>
+          Remove completed
+        </button>
+      </div>
+      <div>Task list:</div>
+      {props.listItems.length === 0 && <div>No tasks</div>}
       <ul>
         {props.listItems.map((item) => (
           <li key={item.id}>
@@ -52,21 +64,24 @@ export const TodoItemsView: React.FC<ViewProps> = (props) => {
           </li>
         ))}
       </ul>
-      <FilterButton
-        name="All"
-        selected={props.filterType === FilterType.All}
-        onClick={() => props.onFilterChanged(FilterType.All)}
-      />
-      <FilterButton
-        name="Active"
-        selected={props.filterType === FilterType.Active}
-        onClick={() => props.onFilterChanged(FilterType.Active)}
-      />
-      <FilterButton
-        name="Completed"
-        selected={props.filterType === FilterType.Completed}
-        onClick={() => props.onFilterChanged(FilterType.Completed)}
-      />
+      <div>
+        <div>Filter:</div>
+        <FilterButton
+          name="All"
+          selected={props.filterType === FilterType.All}
+          onClick={() => props.onFilterChanged(FilterType.All)}
+        />
+        <FilterButton
+          name="Active"
+          selected={props.filterType === FilterType.Active}
+          onClick={() => props.onFilterChanged(FilterType.Active)}
+        />
+        <FilterButton
+          name="Completed"
+          selected={props.filterType === FilterType.Completed}
+          onClick={() => props.onFilterChanged(FilterType.Completed)}
+        />
+      </div>
     </div>
   );
 };

@@ -4,6 +4,7 @@ export interface ViewProps {
   readonly name: string;
   readonly onChange: (val: string) => void;
   readonly onKeyDownEnter: () => void;
+  readonly onAddButtonClick: () => void;
 }
 
 export const TodoInputView: React.FC<ViewProps> = (props) => {
@@ -21,6 +22,9 @@ export const TodoInputView: React.FC<ViewProps> = (props) => {
           }
         }}
       />
+      <button className={"add-button"} onClick={() => props.onAddButtonClick()}>
+        Add
+      </button>
     </div>
   );
 };

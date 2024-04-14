@@ -1,3 +1,16 @@
 .selected {
     font-weight: bold;
 }
+
+.todo-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-container {
+    margin-block: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
