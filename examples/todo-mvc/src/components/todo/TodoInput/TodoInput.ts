@@ -3,9 +3,11 @@ import { TodoInputView, type ViewProps } from "./TodoInputView";
 import { todoInputControllerKey } from "./todo-input-controller-key";
 import {
   asapScheduler,
+  filter,
   map,
   merge,
   observeOn,
+  startWith,
   tap,
   withLatestFrom,
 } from "rxjs";
@@ -14,7 +16,7 @@ import type { TodoStateService } from "../todo-state/todo-state.ts";
 export interface Props {}
 
 export function createTodoInputController(
-  todoStateService: TodoStateService,
+  todoStateService: Pick<TodoStateService, "addTodo">,
 ): Controller<Props, ViewProps> {
   return ({ onChange$, onKeyDownEnter$, onAddButtonClick$ }) => {
     const addItem$ = merge(onKeyDownEnter$, onAddButtonClick$);
@@ -25,11 +27,12 @@ export function createTodoInputController(
         map(() => ""),
         observeOn(asapScheduler), // This delay the reset of the input value to the next tick after addTodoEffect$ is executed
       ),
-    );
+    ).pipe(startWith(""));
 
     const addTodoEffect$ = addItem$.pipe(
       withLatestFrom(name$),
       map(([, val]) => val),
+      filter((name) => name.trim() !== ""),
       tap((name) => todoStateService.addTodo(name)),
     );
 
