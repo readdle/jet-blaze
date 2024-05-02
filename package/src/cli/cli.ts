@@ -3,7 +3,7 @@
 import { camelCase, kebabCase, pascalCase } from "change-case";
 import { Command, Option } from "commander";
 import { existsSync, realpathSync } from "fs";
-import {mkdir, readFile, writeFile} from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import path, { dirname } from "path";
 import packageJson from "../../package.json";
 import { createEjsTransformer } from "./ejs-transformer";
@@ -55,20 +55,20 @@ program
         const servicesPath =
           ops.path || path.join(process.cwd(), "src", "services");
         const srcPath = ops.path || path.join(process.cwd(), "src");
-        const servicesDir = existsSync(servicesPath)
+        const targetDir = existsSync(servicesPath)
           ? servicesPath
           : existsSync(srcPath)
             ? srcPath
             : process.cwd();
-
-        const targetDir = path.join(servicesDir, dashServiceName);
         await mkdir(targetDir, { recursive: true });
         const targetFilePath = path.join(targetDir, `${dashServiceName}.ts`);
         await writeFile(
           targetFilePath,
           transformer({ content: await readFile(mainTemplate, "utf-8") }),
         );
-        console.log(`Created service '${pascalCaseServiceName}'`);
+        console.log(
+          `Service '${pascalCaseServiceName}' has created at '${targetFilePath}'`,
+        );
       }),
   )
   .addCommand(
@@ -146,7 +146,7 @@ program
         );
 
         console.log(
-          `Component '${pascalCaseComponentName}' has created at ${targetDir}`,
+          `Component '${pascalCaseComponentName}' has created at '${targetDir}'`,
         );
       }),
   );
