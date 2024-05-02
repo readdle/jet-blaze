@@ -95,7 +95,7 @@ export type ExternalEvents<P extends object> = {
 
 export type ComposeResult<VP extends object, P extends object> = {
   readonly viewState: ObservableState<ViewState<VP>, ViewState<P>>;
-  readonly sideEffectStreams?: readonly Observable<unknown>[];
+  readonly effects?: readonly Observable<unknown>[];
   readonly subjects?: readonly Subject<unknown>[];
 } & (true extends HasCallbacks<P> ? ExternalEvents<P> : {});
 
@@ -460,7 +460,7 @@ export const connect = <P extends {}, VP extends {}>(
             }
           }),
         ),
-        ...(component.sideEffectStreams ?? []),
+        ...(component.effects ?? []),
         ...externalEventsStreams,
       ).subscribe({
         error: (err) => {

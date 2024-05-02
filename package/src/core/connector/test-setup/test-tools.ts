@@ -40,10 +40,9 @@ export function setUp<P extends object, VP extends object>(
   initProps: P,
 ): SetupResult<P, VP> {
   const inputs = createInputStreams<P, VP>(initProps, false);
-  const { viewState, sideEffectStreams, subjects, ...rest } =
-    controller(inputs);
+  const { viewState, effects, subjects, ...rest } = controller(inputs);
 
-  const sideEffectsStreams = sideEffectStreams ?? [];
+  const sideEffectsStreams = effects ?? [];
 
   const outputs: SetupResult<P, VP>["out"] = reduceInitViewState(
     viewState,
