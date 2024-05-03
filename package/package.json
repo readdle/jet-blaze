@@ -54,6 +54,7 @@
     "vitest": "^1.5.3"
   },
   "scripts": {
+    "test": "vitest --exclude \"**/templates/**\"",
     "clean": "rimraf dist && rimraf dist-create-app",
     "prebuild": "npm run clean",
     "lint": "prettier --check .",
@@ -61,10 +62,9 @@
     "build-core": "tsc -p src/core/tsconfig.commonjs.json && tsc -p src/core/tsconfig.es6.json",
     "prebuild-create": "tsc -p src/cli/tsconfig.json --noEmit",
     "build-create": "esbuild create-app=src/cli/main.ts --bundle --platform=node --outdir=dist-create-app --format=cjs",
-    "prebuild-cli": "tsc -p src/cli/tsconfig.json --noEmit",
+    "prebuild-cli": "tsc -p src/cli/tsconfig.json --noEmit && vitest --exclude \"**/templates/**\" --run",
     "build-cli": "esbuild cli=src/cli/cli.ts --bundle --platform=node --outdir=dist/cli --format=cjs",
     "build": "npm run build-core  && npm run build-cli && npm run build-create",
-    "postbuild": "ts-node scripts/post-build.ts",
-    "test": "vitest --exclude \"**/templates/**\""
+    "postbuild": "ts-node scripts/post-build.ts"
   }
 }
