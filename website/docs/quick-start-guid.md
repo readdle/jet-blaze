@@ -44,7 +44,7 @@ Ensure Node.js and npm are installed on your system.
 
 ### 2. Add a New Component
 
-1. **Generate a New Component:**
+1. **Bootstrapping a New Component:**
     - Create a new component using the Jet-Blaze CLI:
       ```bash
       npx jb create component MyComponent
@@ -60,34 +60,20 @@ Ensure Node.js and npm are installed on your system.
       │   │   ├── MyComponentView.tsx
       │   │   ├── my-component-controller-key.ts
       ```
+    The CLI also adds the component to the DI module in `src/composition-root/main-module.ts`.
+    You could specify different module name by providing the `--module-file-path <moduleFilePath>` (`-m`) flag.
 
-2. **Manual Addition to the DI Module:**
-    - The CLI currently does not auto-add the component to the DI module. However, it generates the corresponding code
-      at the controller file's end.
-    - Manually add the component to the DI module:
-        - Open the controller file and locate the TODO comment with the generated code to register the controller in the
-          DI container:
-          ```javascript title="src/components/MyComponent/MyComponent.ts"
-          
-          // TODO: Add the line to the DI module to register the component
-          // container.register(myComponentControllerKey, c => createMyComponentController());
-          
-          export const MyComponent = connect(MyComponentView, myComponentControllerKey);
-          ```
-        - Copy this code and insert it into `src/composition-root/main-module.ts`:
-          ```javascript title="src/composition-root/main-module.ts"
-          // ... other imports and registrations
-   
-          import { myComponentControllerKey } from "../components/MyComponent/my-component-controller-key.ts";
-          import { createMyComponentController } from "../components/MyComponent/MyComponent.ts";
-           
-          export const mainModule: Module = (container) => {
-             // ... other registrations
-             container.register(myComponentControllerKey, c => createMyComponentController());
-          };
-          ```
-        - Add the component to your application's JSX in `src/App.tsx` within the `DIContainer` component.
-
+   2. **Add the component to the JSX:**
+      - Add the component to your application's JSX in `src/App.tsx` within the `DIContainer` component.
+           ```tsx
+        function App() {
+            return (
+               <DIContainer container={createContainer}>
+                  <MyComponent />
+               </DIContainer>
+            );
+        }
+           ```
 ### 3. Run Your Application
 
 1. **Development Mode:**
