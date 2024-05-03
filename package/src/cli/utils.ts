@@ -1,5 +1,5 @@
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
-import { join } from "path";
+import { join, parse } from "path";
 
 export type FileTransformationContext = {
   content: string;
@@ -35,4 +35,9 @@ export async function copyDirectoryWithTransformation(
       await writeFile(destPath, newContent);
     }
   }
+}
+
+export function removeExtension(filename: string) {
+  const pathParsed = parse(filename);
+  return join(pathParsed.dir, pathParsed.name);
 }

@@ -4,9 +4,11 @@ import { camelCase, kebabCase, pascalCase } from "change-case";
 import { Command, Option } from "commander";
 import { existsSync, realpathSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
-import path, { dirname } from "path";
+import path, { dirname, join, relative } from "path";
 import packageJson from "../../package.json";
 import { createEjsTransformer } from "./ejs-transformer";
+import { patchDIRegistration } from "./patch-di-registartions";
+import { removeExtension } from "./utils";
 
 if (!process.argv[1]) {
   console.error("Wrong script path", process.argv[1]);
@@ -14,6 +16,16 @@ if (!process.argv[1]) {
 }
 
 const scriptPath = realpathSync(process.argv[1]);
+
+// Determine the nearest package.json path starting from process.cwd()
+let projectRoot = process.cwd();
+while (!existsSync(join(projectRoot, "package.json"))) {
+  projectRoot = dirname(projectRoot);
+  if (projectRoot === "/") {
+    console.error("Cannot determine project root directory");
+    process.exit(1);
+  }
+}
 
 const program = new Command();
 program
@@ -42,26 +54,21 @@ program
           serviceName: pascalCaseServiceName,
           serviceNameCamelCase: camelCaseServiceName,
         });
-        const templatesPath = path.join(
-          dirname(scriptPath),
-          "templates",
-          "service",
-        );
-        const mainTemplate = path.join(templatesPath, "service.ejs");
+        const templatesPath = join(dirname(scriptPath), "templates", "service");
+        const mainTemplate = join(templatesPath, "service.ejs");
 
         if (ops.path) {
           await mkdir(ops.path, { recursive: true });
         }
-        const servicesPath =
-          ops.path || path.join(process.cwd(), "src", "services");
-        const srcPath = ops.path || path.join(process.cwd(), "src");
+        const servicesPath = ops.path || join(projectRoot, "src", "services");
+        const srcPath = ops.path || join(projectRoot, "src");
         const targetDir = existsSync(servicesPath)
           ? servicesPath
           : existsSync(srcPath)
             ? srcPath
-            : process.cwd();
+            : projectRoot;
         await mkdir(targetDir, { recursive: true });
-        const targetFilePath = path.join(targetDir, `${dashServiceName}.ts`);
+        const targetFilePath = join(targetDir, `${dashServiceName}.ts`);
         await writeFile(
           targetFilePath,
           transformer({ content: await readFile(mainTemplate, "utf-8") }),
@@ -81,6 +88,12 @@ program
           "Directory to create component in",
         ),
       )
+      .addOption(
+        new Option(
+          "-m, --module-file-path <moduleFilePath>",
+          "File with DI module that should contain the component registration",
+        ),
+      )
       .action(async (componentName, ops) => {
         const inputComponentName = componentName;
         const pascalCaseComponentName = pascalCase(inputComponentName);
@@ -91,40 +104,50 @@ program
           componentNameCamelCase: camelCaseComponentName,
           kebabCaseComponentName: kebabCaseComponentName,
         });
-        const templatesPath = path.join(
+        const templatesPath = join(
           dirname(scriptPath),
           "templates",
           "component",
         );
-        const mainTemplate = path.join(templatesPath, "main.ejs");
-        const viewTemplate = path.join(templatesPath, "view.ejs");
-        const testTemplate = path.join(templatesPath, "test.ejs");
-        const keyTemplate = path.join(templatesPath, "controller-key.ejs");
+        const mainTemplate = join(templatesPath, "main.ejs");
+        const viewTemplate = join(templatesPath, "view.ejs");
+        const testTemplate = join(templatesPath, "test.ejs");
+        const keyTemplate = join(templatesPath, "controller-key.ejs");
+
+        const moduleFilename =
+          ops.moduleFilePath ||
+          join(projectRoot, "src", "composition-root", "main-module.ts");
+        if (!existsSync(moduleFilename)) {
+          console.error(
+            `Module file '${moduleFilename}' does not exist. Use -m option to specify the file`,
+          );
+          process.exit(1);
+        }
 
         if (ops.path) {
           await mkdir(ops.path, { recursive: true });
         }
         const componentsPath =
-          ops.path || path.join(process.cwd(), "src", "components");
+          ops.path || join(projectRoot, "src", "components");
         const componentsDir = existsSync(componentsPath)
           ? componentsPath
-          : process.cwd();
+          : projectRoot;
 
-        const targetDir = path.join(componentsDir, pascalCaseComponentName);
+        const targetDir = join(componentsDir, pascalCaseComponentName);
         await mkdir(targetDir, { recursive: true });
-        const targetViewFilePath = path.join(
+        const targetViewFilePath = join(
           targetDir,
           `${pascalCaseComponentName}View.tsx`,
         );
-        const targetComponentFilePath = path.join(
+        const targetComponentFilePath = join(
           targetDir,
           `${pascalCaseComponentName}.ts`,
         );
-        const targetTestsFilePath = path.join(
+        const targetTestsFilePath = join(
           targetDir,
           `${pascalCaseComponentName}.test.ts`,
         );
-        const targetComponentKeyFilePath = path.join(
+        const targetComponentKeyFilePath = join(
           targetDir,
           `${kebabCaseComponentName}-controller-key.ts`,
         );
@@ -144,6 +167,20 @@ program
           targetComponentKeyFilePath,
           transformer({ content: await readFile(keyTemplate, "utf-8") }),
         );
+
+        const code = await patchDIRegistration({
+          code: await readFile(moduleFilename, "utf-8"),
+          targetComponentFilePath: removeExtension(
+            relative(path.dirname(moduleFilename), targetComponentFilePath),
+          ),
+          targetComponentKeyFilePath: removeExtension(
+            relative(path.dirname(moduleFilename), targetComponentKeyFilePath),
+          ),
+          componentNameCamelCase: camelCaseComponentName,
+          pascalCaseComponentName,
+        });
+
+        await writeFile(moduleFilename, code);
 
         console.log(
           `Component '${pascalCaseComponentName}' has created at '${targetDir}'`,

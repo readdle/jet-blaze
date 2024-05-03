@@ -32,6 +32,15 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.24.5",
+    "@babel/generator": "^7.24.5",
+    "@babel/parser": "^7.24.5",
+    "@babel/template": "^7.24.0",
+    "@babel/traverse": "^7.24.5",
+    "@babel/types": "^7.24.5",
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__template": "^7.4.4",
+    "@types/babel__traverse": "^7.20.5",
     "@types/ejs": "^3.1.5",
     "change-case": "^5.4.3",
     "commander": "^11.1.0",
@@ -41,7 +50,8 @@
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.5.3"
   },
   "scripts": {
     "clean": "rimraf dist && rimraf dist-create-app",
@@ -54,6 +64,7 @@
     "prebuild-cli": "tsc -p src/cli/tsconfig.json --noEmit",
     "build-cli": "esbuild cli=src/cli/cli.ts --bundle --platform=node --outdir=dist/cli --format=cjs",
     "build": "npm run build-core  && npm run build-cli && npm run build-create",
-    "postbuild": "ts-node scripts/post-build.ts"
+    "postbuild": "ts-node scripts/post-build.ts",
+    "test": "vitest --exclude \"**/templates/**\""
   }
 }

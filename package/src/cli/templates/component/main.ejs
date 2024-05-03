@@ -20,7 +20,4 @@ export function create<%= componentName %>Controller(
     };
 }
 
-// TODO: Add the line to the DI module to register the component
-// container.register(<%= componentNameCamelCase %>ControllerKey, c => create<%= componentName %>Controller());
-
 export const <%= componentName %> = connect(<%= componentName %>View, <%= componentNameCamelCase %>ControllerKey);

@@ -2,7 +2,7 @@
 
 import { Option, program } from "commander";
 import enquirer from "enquirer";
-import path, { dirname } from "path";
+import { dirname, join } from "path";
 import { realpath } from "fs/promises";
 import { createEjsTransformer } from "./ejs-transformer";
 import { copyDirectoryWithTransformation } from "./utils";
@@ -59,8 +59,8 @@ async function main(projectName: string, template: string): Promise<void> {
     projectName = await promptForAppName();
   }
 
-  const templatesPath = path.join(dirname(scriptPath), "templates", template);
-  const projectDir = path.join(process.cwd(), projectName);
+  const templatesPath = join(dirname(scriptPath), "templates", template);
+  const projectDir = join(process.cwd(), projectName);
   console.log(
     `Creating application '${projectName}' based on template ${templatesPath} in ${projectDir}...`,
   );
