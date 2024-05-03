@@ -7,7 +7,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import path, { dirname, join, relative } from "path";
 import packageJson from "../../package.json";
 import { createEjsTransformer } from "./ejs-transformer";
-import { patchDIRegistration } from "./patch-di-registartions";
+import { patchControllerDIRegistration } from "./patch-di-registartions";
 import { removeExtension } from "./utils";
 
 if (!process.argv[1]) {
@@ -168,7 +168,7 @@ program
           transformer({ content: await readFile(keyTemplate, "utf-8") }),
         );
 
-        const code = await patchDIRegistration({
+        const code = await patchControllerDIRegistration({
           code: await readFile(moduleFilename, "utf-8"),
           targetComponentFilePath: removeExtension(
             relative(path.dirname(moduleFilename), targetComponentFilePath),

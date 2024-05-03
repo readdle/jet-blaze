@@ -4,7 +4,7 @@ import generate from "@babel/generator";
 import template from "@babel/template";
 import * as t from "@babel/types";
 
-export type PatchDIRegistrationsOptions = {
+export type PatchControllerDIRegistrationsOptions = {
   readonly code: string;
   readonly targetComponentFilePath: string;
   readonly targetComponentKeyFilePath: string;
@@ -12,11 +12,9 @@ export type PatchDIRegistrationsOptions = {
   readonly pascalCaseComponentName: string;
 };
 
-export async function patchDIRegistration(
-  options: PatchDIRegistrationsOptions,
+export async function patchControllerDIRegistration(
+  options: PatchControllerDIRegistrationsOptions,
 ) {
-  const codeSrc = options.code;
-
   const {
     targetComponentFilePath,
     targetComponentKeyFilePath,
@@ -36,11 +34,6 @@ export async function patchDIRegistration(
     },
   )();
 
-  const ast = parse(codeSrc, {
-    sourceType: "module",
-    plugins: ["typescript", "explicitResourceManagement"],
-  });
-
   const registerController = template(
     `
         %%containerObjectName%%.register(${componentNameCamelCase}ControllerKey, (_c) => create${pascalCaseComponentName}Controller());// ##ENDLINE##
@@ -50,6 +43,23 @@ export async function patchDIRegistration(
       plugins: ["typescript", "explicitResourceManagement"],
     },
   );
+
+  return updateDIModule(options.code, imports, (containerName) =>
+    registerController({
+      containerObjectName: containerName,
+    }),
+  );
+}
+
+function updateDIModule(
+  codeSrc: string,
+  afterImports: t.Statement | t.Statement[],
+  registrations: (containerName: string) => t.Statement | t.Statement[],
+): string {
+  const ast = parse(codeSrc, {
+    sourceType: "module",
+    plugins: ["typescript", "explicitResourceManagement"],
+  });
 
   traverse(ast, {
     Program({ node }) {
@@ -62,7 +72,7 @@ export async function patchDIRegistration(
       node.body.splice(
         lastIndexOfImport + 1,
         0,
-        ...(Array.isArray(imports) ? imports : [imports]),
+        ...(Array.isArray(afterImports) ? afterImports : [afterImports]),
       );
     },
     ExportNamedDeclaration({ node }) {
@@ -93,9 +103,7 @@ export async function patchDIRegistration(
           const containerName =
             node.declaration.declarations[0].init.params[0].name;
 
-          const register = registerController({
-            containerObjectName: containerName,
-          });
+          const register = registrations(containerName);
 
           node.declaration.declarations[0].init.body.body.push(
             ...(Array.isArray(register) ? register : [register]),
@@ -104,6 +112,7 @@ export async function patchDIRegistration(
       }
     },
   });
+
   const code = generate(ast, {
     comments: true,
   }).code.trim();

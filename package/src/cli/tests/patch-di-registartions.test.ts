@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { patchDIRegistration } from "../patch-di-registartions";
+import { patchControllerDIRegistration } from "../patch-di-registartions";
 
 describe("patch-di-registrations", () => {
   it("should patch DI component controller DI registrations", async () => {
@@ -11,7 +11,7 @@ export const mainModule: Module = (_container) => {
     _container.register(myTestComponentKey2, (_c) => createMyTestComponent2()); 
 };
 `;
-    const result = await patchDIRegistration({
+    const result = await patchControllerDIRegistration({
       code: src,
       targetComponentFilePath: "targetComponentFilePath",
       targetComponentKeyFilePath: "targetComponentKeyFilePath",
@@ -39,7 +39,7 @@ import { type Module } from "jet-blaze/di";
 
 export const mainModule: Module = (_container) => {};
 `;
-    const result = await patchDIRegistration({
+    const result = await patchControllerDIRegistration({
       code: src,
       targetComponentFilePath: "targetComponentFilePath",
       targetComponentKeyFilePath: "targetComponentKeyFilePath",
