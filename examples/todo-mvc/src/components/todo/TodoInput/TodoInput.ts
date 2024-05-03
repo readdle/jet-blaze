@@ -40,7 +40,7 @@ export function createTodoInputController(
       viewState: {
         name: [name$, ""],
       },
-      sideEffectStreams: [addTodoEffect$],
+      effects: [addTodoEffect$],
     };
   };
 }

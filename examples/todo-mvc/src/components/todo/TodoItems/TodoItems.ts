@@ -85,7 +85,7 @@ export function createTodoItemsController(
         listItems: [listItems$, []],
         filterType: [filterType$, FilterType.All],
       },
-      sideEffectStreams: [
+      effects: [
         onToggleItemEffect$,
         onItemRemoveEffect$,
         onToggleAllEffect$,
