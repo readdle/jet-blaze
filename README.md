@@ -65,9 +65,17 @@ The command created the folder that contains
 - setup for writing unit tests for the controller
 - DI key for the controller
 
-Current version of CLI can't automatically add the component to the DI module.
-To do that you need to add the component to the DI module manually.
-Just copy the string from the generated controller file and add it to the DI module.
+Also, the command added the component to the DI module.
+
+### Creating Services
+
+To create a new service using Jet-Blaze's CLI:
+
+```bash
+npx jb create service [serviceName]
+```
+
+The command created the service file and added the service to the DI module.
 
 ### Documentation
 
