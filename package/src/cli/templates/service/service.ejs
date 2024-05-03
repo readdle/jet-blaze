@@ -13,9 +13,3 @@ export const create<%= serviceName %>Service = (): <%= serviceName %>Service & D
         [Symbol.dispose]: () => [val$].forEach(i => i.complete())
     };
 };
-
-// TODO: Add this to the header of DI module to register the service
-// export const <%= serviceNameCamelCase %>ServiceKey = key<<%= serviceName %>Service>("<%= serviceName %>Service");
-
-// TODO: Add this to the registrations within DI module to register the service
-// container.register(<%= serviceNameCamelCase %>ServiceKey, _c => create<%= serviceName %>Service());

@@ -7,8 +7,11 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import path, { dirname, join, relative } from "path";
 import packageJson from "../../package.json";
 import { createEjsTransformer } from "./ejs-transformer";
-import { patchControllerDIRegistration } from "./patch-di-registartions";
-import { removeExtension } from "./utils";
+import {
+  patchControllerDIRegistration,
+  patchServiceDIRegistration,
+} from "./patch-di-registartions";
+import { getModuleFilePath, removeExtension } from "./utils";
 
 if (!process.argv[1]) {
   console.error("Wrong script path", process.argv[1]);
@@ -45,6 +48,12 @@ program
           "Directory to create service in",
         ),
       )
+      .addOption(
+        new Option(
+          "-m, --module-file-path <moduleFilePath>",
+          "File with DI module that should contain the service registration",
+        ),
+      )
       .action(async (serviceName, ops) => {
         const inputServiceName = serviceName;
         const dashServiceName = kebabCase(inputServiceName);
@@ -56,6 +65,8 @@ program
         });
         const templatesPath = join(dirname(scriptPath), "templates", "service");
         const mainTemplate = join(templatesPath, "service.ejs");
+
+        const moduleFilename = getModuleFilePath(projectRoot, ops);
 
         if (ops.path) {
           await mkdir(ops.path, { recursive: true });
@@ -73,6 +84,18 @@ program
           targetFilePath,
           transformer({ content: await readFile(mainTemplate, "utf-8") }),
         );
+
+        const code = await patchServiceDIRegistration({
+          code: await readFile(moduleFilename, "utf-8"),
+          targetServiceFilePath: removeExtension(
+            relative(path.dirname(moduleFilename), targetFilePath),
+          ),
+          serviceNameCamelCase: camelCaseServiceName,
+          pascalCaseServiceName,
+        });
+
+        await writeFile(moduleFilename, code);
+
         console.log(
           `Service '${pascalCaseServiceName}' has created at '${targetFilePath}'`,
         );
@@ -114,15 +137,7 @@ program
         const testTemplate = join(templatesPath, "test.ejs");
         const keyTemplate = join(templatesPath, "controller-key.ejs");
 
-        const moduleFilename =
-          ops.moduleFilePath ||
-          join(projectRoot, "src", "composition-root", "main-module.ts");
-        if (!existsSync(moduleFilename)) {
-          console.error(
-            `Module file '${moduleFilename}' does not exist. Use -m option to specify the file`,
-          );
-          process.exit(1);
-        }
+        const moduleFilename = getModuleFilePath(projectRoot, ops);
 
         if (ops.path) {
           await mkdir(ops.path, { recursive: true });

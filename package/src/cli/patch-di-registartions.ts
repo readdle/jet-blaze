@@ -4,6 +4,13 @@ import generate from "@babel/generator";
 import template from "@babel/template";
 import * as t from "@babel/types";
 
+export type PatchServiceDIRegistrationsOptions = {
+  readonly code: string;
+  readonly targetServiceFilePath: string;
+  readonly serviceNameCamelCase: string;
+  readonly pascalCaseServiceName: string;
+};
+
 export type PatchControllerDIRegistrationsOptions = {
   readonly code: string;
   readonly targetComponentFilePath: string;
@@ -12,6 +19,42 @@ export type PatchControllerDIRegistrationsOptions = {
   readonly pascalCaseComponentName: string;
 };
 
+export async function patchServiceDIRegistration(
+  options: PatchServiceDIRegistrationsOptions,
+) {
+  const { targetServiceFilePath, serviceNameCamelCase, pascalCaseServiceName } =
+    options;
+
+  const imports = template(
+    `import { create${pascalCaseServiceName}Service, type ${pascalCaseServiceName}Service } from "${targetServiceFilePath}";// ##ENDLINE##
+// ##ENDLINE##
+const ${serviceNameCamelCase}ServiceKey = key<${pascalCaseServiceName}Service>("${pascalCaseServiceName}Service");// ##ENDLINE##
+// ##ENDLINE##
+`,
+    {
+      preserveComments: true,
+      plugins: ["typescript", "explicitResourceManagement"],
+    },
+  )();
+
+  const registerController = template(
+    `%%containerObjectName%%.register(${serviceNameCamelCase}ServiceKey, (_c) => create${pascalCaseServiceName}Service());// ##ENDLINE##`,
+    {
+      preserveComments: true,
+      plugins: ["typescript", "explicitResourceManagement"],
+    },
+  );
+
+  return updateDIModule(
+    options.code,
+    imports,
+    (containerName) =>
+      registerController({
+        containerObjectName: containerName,
+      }),
+    true,
+  );
+}
 export async function patchControllerDIRegistration(
   options: PatchControllerDIRegistrationsOptions,
 ) {
@@ -23,10 +66,9 @@ export async function patchControllerDIRegistration(
   } = options;
 
   const imports = template(
-    `
-    import { ${componentNameCamelCase}ControllerKey } from "${targetComponentKeyFilePath}";// ##ENDLINE##
-    import { create${pascalCaseComponentName}Controller } from "${targetComponentFilePath}";// ##ENDLINE##
-    // ##ENDLINE##
+    `import { ${componentNameCamelCase}ControllerKey } from "${targetComponentKeyFilePath}";// ##ENDLINE##
+import { create${pascalCaseComponentName}Controller } from "${targetComponentFilePath}";// ##ENDLINE##
+// ##ENDLINE##
   `,
     {
       preserveComments: true,
@@ -55,6 +97,7 @@ function updateDIModule(
   codeSrc: string,
   afterImports: t.Statement | t.Statement[],
   registrations: (containerName: string) => t.Statement | t.Statement[],
+  shouldAddKeyImport = false,
 ): string {
   const ast = parse(codeSrc, {
     sourceType: "module",
@@ -62,6 +105,17 @@ function updateDIModule(
   });
 
   traverse(ast, {
+    ImportDeclaration({ node }) {
+      if (
+        shouldAddKeyImport &&
+        node.source.value === "jet-blaze/di" &&
+        node.specifiers.every((specifier) => specifier.local.name !== "key")
+      ) {
+        node.specifiers.push(
+          t.importSpecifier(t.identifier("key"), t.identifier("key")),
+        );
+      }
+    },
     Program({ node }) {
       const lastIndexOfImport = node.body.reduce((acc, item, index) => {
         if (t.isImportDeclaration(item)) {

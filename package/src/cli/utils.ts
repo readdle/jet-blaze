@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import { join, parse } from "path";
+import { existsSync } from "fs";
 
 export type FileTransformationContext = {
   content: string;
@@ -40,4 +41,22 @@ export async function copyDirectoryWithTransformation(
 export function removeExtension(filename: string) {
   const pathParsed = parse(filename);
   return join(pathParsed.dir, pathParsed.name);
+}
+
+export function getModuleFilePath(
+  projectRoot: string,
+  ops: { readonly moduleFilePath?: string },
+) {
+  const moduleFilename =
+    ops.moduleFilePath ||
+    join(projectRoot, "src", "composition-root", "main-module.ts");
+
+  if (!existsSync(moduleFilename)) {
+    console.error(
+      `Module file '${moduleFilename}' does not exist. Use -m option to specify the file`,
+    );
+    process.exit(1);
+  } else {
+    return moduleFilename;
+  }
 }
