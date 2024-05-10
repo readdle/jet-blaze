@@ -364,15 +364,139 @@ export function createMyComponentController(): Controller<Props, ViewProps> {
 }
 ```
 #### External(HOC) events
-#### Effects
+The `externalEvents` property of the Controller result object contains the object that defines the streams that fire events for the external(HOC) callbacks. The object should contain the definition of the stream composition for every callback in the `Props` type. The property is optional and could be omitted if the component doesn't have any external(HOC) callbacks.
 
-### Memorization
+Every time the stream emits the value the connector will call the correspondent callback with the value as an argument.
+Example:
+```typescript
+// View module
+export interface ViewProps {
+  readonly val: number;
+  readonly onIncrementClick: () => void;
+  readonly onDecrementClick: () => void;
+}
+// Controller module
+export type Props = {
+  readonly onChange: (val: number) => void;
+};
+
+export function createInputCounterController(): Controller<Props, ViewProps> {
+  return ({ onDecrementClick$, onIncrementClick$, mount$ }) => {
+    const val$ = merge(
+      onDecrementClick$.pipe(map(() => -1)),
+      onIncrementClick$.pipe(map(() => 1)),
+      mount$.pipe(map(() => 0)),
+    ).pipe(
+      scan((acc, x) => (x === 0 ? 0 : acc + x), 0),
+      distinctUntilChanged(),
+      share(),
+    );
+
+    return {
+      viewState: {
+        val: [val$, 0],
+      },
+      externalEvents: {
+        onChange: val$
+      }
+    };
+  };
+}
+```
+Here `onChange` is the external(HOC) callback that will be called by the connector when the `val$` stream emits the value and it is changed.
+#### Effects
+The `effects` property of the Controller result object contains the array that defines the streams that introduce side effects. The array should contain the definition of the stream composition for every side effect that should be performed by the component. The property is optional and could be omitted if the component doesn't have any side effects.
+
+Side effects is used to perform the operations that are not related to the View rendering or the external(HOC) callbacks. The side effects could be used to perform the operations like:
+ - HTTP requests
+ - Service calls
+ - etc.
+
+Example:
+```typescript
+// Controller module
+interface FooService {
+  readonly someUpdatesOnIncrement: (val: number) => void;
+}
+export function createInputCounterController(fooService: FooService): Controller<Props, ViewProps> {
+  return ({ onIncrementClick$ }) => {
+    const val$ = of(0); // some logic here to calculate the value
+    const effect$ = onIncrementClick$.pipe(
+      withLatestFrom(val$),
+      tap(([ ,val]) => fooService.someUpdatesOnIncrement(val))
+    );
+    return {
+      effects: [ effect$ ]
+    };
+  };
+}
+```
+Here `fooService` is the external service that is injected to the Controller. The `someUpdatesOnIncrement` method of the service is called when the `onIncrementClick` callback is called.
+
+:::warning[Don't use subscribe in the Controller]
+The Controller should not use the `subscribe` method. The Controller should return the streams that will be subscribed by the connector. The Controller should not have any side effects. The side effects should be implemented in the `effects` property of the Controller object as a regular RxJS streams.
+ - This guarantees that the Controller is pure and can be easily tested.
+ - Also this guarabtees that there are no race conditions between the streams.
+:::
 
 ### Testing
+The Controller is the pure function that returns the object with the set of streams. The Controller should not have any side effects. The side effects should be implemented in the `effects` property of the Controller object. 
+This allows to easily test the Controller. The Controller could be tested by providing the set of input streams and checking the output streams.
+The Jet Blaze provides the `setUp` function that is used to test the Controller. 
+The `setUp` function get the Controller factory function and the initial HOC props as arguments. The function returns the object with the set of streams that could be used to check the output streams. 
+ - it provides the `mount` and `dispose` methods that should be called to start and stop the streams composition. 
+ - it provides the `in` object that contains the set of input streams that should be pushed to the Controller.
+ - it provides the `out` object that contains the set of output streams that could be checked.
+
+The last one is the `BehaviorSubject` that allows just check the last value of the stream with the `val` property.
+
+Example:
+```typescript
+import { setUp, type SetupResult } from "jet-blaze/connector";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createInputCounterController, type Props } from "./InputCounter.ts";
+import type { ViewProps } from "./InputCounterView.tsx";
+
+describe("InputCounter Component", () => {
+  let setup: SetupResult<Props, ViewProps>;
+  beforeEach(() => {
+    const initialProps: Props = {};
+    setup = setUp(createInputCounterController(), initialProps);
+    setup.mount();
+  });
+
+  afterEach(() => {
+    setup.dispose();
+  });
+
+  it("onMount the val shoul be 0", () => {
+    expect(setup.out.val).toBe(0);
+  });
+
+  it("onIncrementClick should add 1 to the val", () => {
+    setup.in.onIncrementClick$.next();
+    expect(setup.out.val).toBe(1);
+  });
+
+  it("onDecrementClick shiould descrease the val by 1", () => {
+    setup.in.onDecrementClick$.next();
+    expect(setup.out.val).toBe(-1);
+  });
+
+  it("onIncrementClick and then onDecrementClick should not change the value", () => {
+    setup.in.onIncrementClick$.next();
+    setup.in.onDecrementClick$.next();
+    expect(setup.out.val).toBe(0);
+  });
+});
+```
 
 
-#### Don't use subscribe in the Controller
-The Controller should not use the `subscribe` method. The Controller should return the streams that will be subscribed by the connector. The connector will subscribe to the streams and push the values to the View. The Controller should not have any side effects. The side effects should be implemented in the `effects` property of the Controller object.
+## Memorization
+The connector provides the memorization mechanism that allows to memorize the internal View as well as the external(HOC) properties. The memorization is used to prevent the unnecessary rendering of the View and the unnecessary updates inside the streams composition. The memorization is implemented with the help of the React `memo` function with the shallow comparison of the props.
 
-This guarantees that the Controller is pure and can be easily tested.
-Also this guarabtees that there are no race conditions between the streams.
+By default both layers of the memorization are enabled. It could be changed by providing the `renderStrategy` argument to the `connect` function. It is the enum with the following values:
+ - `RenderStrategy.MemoizedInner` - the memorization of the internal View properties is enabled and the memorization of the external(HOC) properties is disabled.
+ - `RenderStrategy.MemoizedOuter` - the memorization of the internal View properties is disabled and the memorization of the external(HOC) properties is enabled.
+ - `RenderStrategy.None` - the memorization of the internal View properties is disabled and the memorization of the external(HOC) properties is disabled.
+ - `RenderStrategy.Memoized` - the memorization of the internal View properties is enabled and the memorization of the external(HOC) properties is enabled. It is the default value.
