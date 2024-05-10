@@ -248,12 +248,121 @@ Here `service` is the external service that is injected to the Controller. The `
 The effect stream will call the `increment` method of the service when the `onIncrementClick` callback is called.
 
 ### Output Streams
+Controller creates the composition of the output streams based on the input streams. The output streams are the streams that provide the values for the View properties, fire the events for the external(HOC) callbacks and introduce the side effects.
 
 #### View state
-`viewState` contains the object. It should contains the definition of the stream composition for every value in the `ViewProps`. If any of thease streams are changed that push new state to the View. In the example aboove the `val$` variable contains the stream for the correspondent `val` propery in the `ViewProps`. To bind the `val$` to `val` should also provide initial value. As result stream and value are combined to the tupple `[val$, 0]` and set to the correspondent property `val`.
+The `viewState` property of the Controller result object contains the object that defines the streams that provide the values for the View properties. The object should contain the definition of the stream composition for every value in the `ViewProps`. If any of thease streams are changed that push new state to the View.
+
+:::tip
+To handle the complexity is much better to split the streams composition to the parts that are responsible for the correspondent View property. And think about it as an independent state machine that provides the value for the View property.
+:::
+
+`viewState` property requires the value that is ussualy a tuple with two elements:
+ - The first element is the RxJS stream that provides the value for the View property.
+ - The second element is the initial value for the View property. It is used to initialize the View property before the stream emits the first value.
+
+ Example:
+ ```typescript
+// View module
+export interface ViewProps {
+  readonly val: number;
+  readonly name: string;
+}
+// Controller module
+export function createInputCounterController(): Controller<Props, ViewProps> {
+  return ({ onDecrementClick$, onIncrementClick$, mount$ }) => {
+    const val$ = merge(
+      onDecrementClick$.pipe(map(() => -1)),
+      onIncrementClick$.pipe(map(() => 1)),
+      mount$.pipe(map(() => 0)),
+    ).pipe(
+      scan((acc, x) => (x === 0 ? 0 : acc + x), 0),
+      share(),
+    );
+
+    const name$ = of('John').pipe(
+      delay(1000)
+    );
+
+    return {
+      viewState: {
+        val: [val$, 0],
+        name: [name$, '<empty>']
+      },
+    };
+  };
+ ```
+Here `val$` is the stream that provides the value for the `val` property of the View.The initial value of the stream is `0`. Also `name$` is the stream that provides the value for the `name` property of the View. The initial value of the stream is `'<empty>'`. The `name$` stream emits the value `'John'` after 1 second.
+
 ##### Static values
-##### Passthrow props
-##### React children
+If the value of the View property is static and will never changed it should be provided as a simple constant value.
+
+Example:
+```typescript
+// View module
+export interface ViewProps {
+  readonly name: string;
+}
+// Controller module
+export function createMyComponentController(): Controller<Props, ViewProps> {
+  return () => {
+    // Controller logic
+    return {
+      viewState: {
+        name: 'John'
+      },
+    };
+  };
+}
+```
+##### Passthrow HOC props
+Sometimes the value of the View property should be the same as the external(HOC) property. In this case the value should be provided with help of `passInput` function. The `passInput` function get the single argument that is the name of the external(HOC) property. The type of the external(HOC) property should be the same as the type of the View property.
+
+Example:
+```typescript
+// View module
+export interface ViewProps {
+  readonly className?: string;
+}
+// Controller module
+export type Props = {
+  readonly className?: string;
+};
+
+export function createMyComponentController(): Controller<Props, ViewProps> {
+  return ({ props$ }) => {
+    // Controller logic
+    return {
+      viewState: {
+        className: passInput('className')
+      },
+    };
+  };
+}
+```
+##### Pass React children property
+`passInput` function could be used to pass the React children property. The children property is the special property that contains the children of the component. The children property should be passed to the View as the `children` property.
+Example:
+```typescript
+// View module
+export interface ViewProps {
+  readonly children: React.ReactNode;
+}
+// Controller module
+export type Props = {
+  readonly children: React.ReactNode;
+};
+export function createMyComponentController(): Controller<Props, ViewProps> {
+  return () => {
+    // Controller logic
+    return {
+      viewState: {
+        children: passInput('children')
+      },
+    };
+  };
+}
+```
 #### External(HOC) events
 #### Effects
 
