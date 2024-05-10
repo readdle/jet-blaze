@@ -1,6 +1,6 @@
 ---
 sidebar_label: Smart Components
-sidebar_position: 4
+sidebar_position: false
 ---
 # Smart components
 Smart Componet based on Contorller and View. And implemente Model-View-Controller pattern. The Controller is the state machine that defines the streams composition based on the input streams. The View is the React component that renders the state of the Controller and fires the events to the Controller.
@@ -18,7 +18,6 @@ The View is stateless functional React component.
 View should be simple and doesn't contain any logic. It is important from the testing perspective. The logic should be pushed to the Controller to be able easy create Unit Tests for it.
 
 :::tip
-
 To follow that principles View define self properties types based on view data requirenments. View should not have the dependencies from Controller module or sevice modules or any data layer types. 
 For example if need to redner text label that contains current data and time you should pass it to the View as a string property and delegate to the controller the formating logic that convert `Date` object to the string. 
 :::
