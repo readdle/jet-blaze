@@ -1,5 +1,5 @@
 ---
-sidebar_label: Overview
+sidebar_label: Components Overview
 sidebar_position: 1
 ---
 # Smart Components Overview
