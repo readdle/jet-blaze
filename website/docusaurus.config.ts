@@ -91,7 +91,7 @@ const config: Config = {
         //   ],
         // },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Readdle, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Readdle, Inc.`,
     },
     prism: {
       theme: prismThemes.github,
