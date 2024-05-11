@@ -9,6 +9,7 @@ To streamline the development process, Jet-Blaze provides a CLI command for gene
 ## Creating a New Component
 
 1. Run the following command in your project directory:
+
     ```bash
     npx jb create component <name>
     ```
@@ -20,18 +21,21 @@ To streamline the development process, Jet-Blaze provides a CLI command for gene
     - **Tests:** Sets up unit tests for the Controller.
     - **DI Key:** The key used for dependency injection.
 
-3. Register the generated component in your DI module.
+3. The CLI automatically registers the new component in the DI module using Babel.
 
 ## Folder Structure Example
 
 After running the command, the following structure will be created:
-```
-<project-root>
-└── src/
-    └── components/
-        └── <name>
-            ├── <name>.ts
-            ├── <name>View.tsx
-            ├── <name>.test.ts
-            └── <name>-controller-key.ts
-```
+
+    ```
+    <project-root>
+    └── src/
+        └── components/
+            └── <name>
+                ├── <name>.ts
+                ├── <name>View.tsx
+                ├── <name>.test.ts
+                └── <name>-controller-key.ts
+    ```
+
+This structure ensures each new component is well-organized, facilitating the setup of View, Controller, and Dependency Injection.

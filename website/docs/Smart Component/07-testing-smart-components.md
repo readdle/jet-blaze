@@ -1,6 +1,6 @@
 ---
 sidebar_label: Testing
-sidebar_position: 6
+sidebar_position: 7
 ---
 # Testing Smart Components
 
@@ -44,8 +44,10 @@ describe('Counter Component', () => {
 });
 ```
 
-### Tips for Effective Testing
+:::tip[Effective Testing]
  - **Isolate Logic**: Keep logic modular to facilitate isolated testing of each stream and behavior.
  - **Use Setup Functions**: Take advantage of the setup functions to handle input/output validation and subscription management.
+ - **Use Mocks**: Use mocks to simulate external dependencies and test the contoller effects.
+:::
 
 With the information provided across these sections, you should be able to efficiently create, manage, and test Smart Components in your Jet-Blaze projects.
