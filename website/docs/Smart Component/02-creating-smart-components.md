@@ -38,4 +38,4 @@ After running the command, the following structure will be created:
                 └── <name>-controller-key.ts
     ```
 
-This structure ensures each new component is well-organized, facilitating the setup of View, Controller, and Dependency Injection.
+This structure ensures each new component is well-organized, facilitating the setup of View, Controller, and [Dependency Injection](../Dependency%20Injection%20Container/di-container-overview).
