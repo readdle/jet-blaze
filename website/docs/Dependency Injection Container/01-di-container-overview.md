@@ -25,7 +25,7 @@ Small components are easier to understand, test, and maintain. Fewer dependencie
 
 There is SOLID software design principles that help achieve this goal. While these principles are not new, they are essential for creating maintainable and scalable applications. 
  - We split the application into smaller components, each with a single responsibility and few dependencies. 
- - We use the [Dependency Inversion Principle (DIP)](https://en.wikipedia.org/wiki/Dependency_inversion_principle) and [Interface Segregation Principle (ISP)]((https://en.wikipedia.org/wiki/Interface_segregation_principle)) to manage and decrease dependencies between components.
+ - We use the [Dependency Inversion Principle (DIP)](https://en.wikipedia.org/wiki/Dependency_inversion_principle) and [Interface Segregation Principle (ISP)](https://en.wikipedia.org/wiki/Interface_segregation_principle) to manage and decrease dependencies between components.
  - We use a [Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot/) to compose the entire object graph of the application in a single location, typically at the application's entry point.
 
 For a more detailed understanding, you can refer to the book [Dependency Injection: Principles, Practices, and Patterns](https://www.oreilly.com/library/view/dependency-injection-principles/9781617294730/).
