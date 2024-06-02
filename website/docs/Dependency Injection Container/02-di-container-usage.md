@@ -1,6 +1,6 @@
 ---
 sidebar_label: Using DI container
-sidebar_position: 1
+sidebar_position: 2
 title: Using DI container
 ---
 # Using DI Container
