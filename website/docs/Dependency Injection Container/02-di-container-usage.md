@@ -110,6 +110,16 @@ const todoStateService = container.resolve(todoStateServiceKey); // Resolves Tod
 
 This method ensures that the `TodoStateService` not only gets created but also receives a properly instantiated `TodoRepository` through the container’s resolution process.
 
+:::tip[Debuggiing]
+ - When resolving a dependency, the container will throw an error if the dependency is not registered. 
+ - For tracking down issues, the container provides a `logToConsole` boolean flag that logs the resolution process to the console.
+ ```Typescript
+const container = createContainer();
+container.logToConsole = true;
+const todoStateService = container.resolve(todoStateServiceKey);
+```
+:::
+
 ## Life Time Management
 
 Effective life time management is crucial for ensuring that dependencies are instantiated and disposed of at appropriate times, which helps in optimizing resource utilization and maintaining application performance.
